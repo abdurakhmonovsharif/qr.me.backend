@@ -13,10 +13,8 @@ import { PlanModule } from './plan/module/plan.module';
 import { SliderModule } from './sliders/module/slider.module';
 import { UploadModule } from './upload/module/upload.module';
 import { GitHubModule } from './github/module/github.module';
-import { HtmlModule } from './HtmlModule';
 @Module({
   imports: [
-    HtmlModule,
     RoleModule,
     PlanModule,
     AuthModule,
