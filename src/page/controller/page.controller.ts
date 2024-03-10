@@ -21,7 +21,7 @@ export class PageController {
 
     @HttpCode(201)
     @Post()
-    async create(@Body() pageData:CreatePageDto): Promise<Page> {
+    async create(@Body() pageData: CreatePageDto): Promise<Page> {
         return await this.pageService.create(pageData);
     }
 

@@ -1,10 +1,11 @@
 // page.entity.ts
 
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn, ManyToOne, Timestamp, ManyToMany } from "typeorm";
 import { Theme } from 'src/themes/entity/theme.entity';
 import { Section } from 'src/sections/entity/section.entity';
 import { User } from "../../users/entity/user.entity";
 import { Contact } from "src/contact/entity/contact.entity";
+import { Link } from "src/link/entity/link.entity";
 
 @Entity()
 export class Page {
@@ -29,17 +30,15 @@ export class Page {
     @OneToMany(() => Section, section => section.page)
     sections: Section[];
 
-    @OneToOne(() => Theme)
-    @JoinColumn()
+    @ManyToOne(() => Theme, theme => theme.pages)
     theme: Theme;
-
     @Column({ default: 0 })
     view_count: number;
 
-    @Column()
+    @Column({ default: () => 'CURRENT_TIMESTAMP' }) // Default to current timestamp
     start_date: string;
 
-    @Column()
+    @Column({ default: () => 'CURRENT_TIMESTAMP' }) // Default to current timestamp
     end_date: string;
 
     @Column()
@@ -54,4 +53,7 @@ export class Page {
     @OneToOne(() => Contact, { cascade: true })
     @JoinColumn()
     contact: Contact;
+    
+    @OneToMany(() => Link, link => link.page)
+    links: Link[];
 }

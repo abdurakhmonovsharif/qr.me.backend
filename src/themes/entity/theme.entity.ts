@@ -1,6 +1,6 @@
 
 import { Page } from 'src/page/entity/page.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 
 @Entity()
 export class Theme {
@@ -8,12 +8,15 @@ export class Theme {
     id: string;
 
     @Column()
-    backgroup_color: string;
+    background_color: string;
 
     @Column()
     font_family: string;
 
-    @ManyToMany(() => Page)
-    @JoinTable()
+    @Column({default:"#FFF"})
+    color: string;
+
+   
+    @OneToMany(() => Page, page => page.theme)
     pages: Page[];
 }

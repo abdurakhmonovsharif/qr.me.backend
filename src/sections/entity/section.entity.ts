@@ -10,7 +10,7 @@ export class Section {
     id: string;
 
     @Column()
-    type: string;
+    type: string;   
 
     @Column()
     imageURL: string;

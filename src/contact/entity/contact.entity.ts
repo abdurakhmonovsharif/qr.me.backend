@@ -22,6 +22,6 @@ export class Contact {
   @Column()
   phoneNumber: string;
 
-  @OneToOne(() => Page, page=> page.contact)
+  @OneToOne(() => Page, page => page.contact)
   section?: Page;
 }

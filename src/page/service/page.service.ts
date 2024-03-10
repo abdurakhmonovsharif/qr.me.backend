@@ -7,6 +7,7 @@ import { ContactService } from 'src/contact/service/contact.service';
 import { ThemeService } from 'src/themes/service/theme.service';
 import { UserService } from 'src/users/service/user.service';
 import { CreatePageDto } from '../dto/page.dto';
+import { LinkService } from 'src/link/service/link.service';
 
 @Injectable()
 export class PageService {
@@ -17,6 +18,7 @@ export class PageService {
         private readonly contactService: ContactService,
         private readonly themeService: ThemeService,
         private readonly usersService: UserService,
+        private readonly linkService: LinkService,
 
     ) { }
 
@@ -36,8 +38,10 @@ export class PageService {
             const newPage = this.pageRepository.create({ ...pageData, contact, user, theme });
             const savedPage = await this.pageRepository.save(newPage);
             await this.sectionService.createSectionsByPageId(pageData.sections, savedPage.id);
+            await this.linkService.createLinkByPageId(pageData.links, savedPage.id)
             return savedPage;
         } catch (error) {
+            console.log(error);
             throw new HttpException('Failed to create page', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
