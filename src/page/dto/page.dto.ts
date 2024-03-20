@@ -3,21 +3,23 @@ import { Link } from "src/link/entity/link.entity";
 import { SectionDto } from "src/sections/dto/section.dto";
 
 export class CreatePageDto {
-    site_link: string;
-    site_name: string;
-    logo: string;
-    description: string;
     qr_code: string;
+    max_view_count: number;
     view_count: number;
     start_date: string;
+    max_edit_count: number;
     end_date: string;
     password: string;
     type: string;
     themeId: string;
+    edited_count: number;
     userId: string;
+    password_view: string;
+    password_edit: string;
+    comment: string;
     sections: SectionDto[];
     contact: Contact;
-    links: Link[]
+    links: Link[];
 }
 
 // {

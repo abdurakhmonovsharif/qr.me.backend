@@ -1,10 +1,11 @@
 import { Controller, Get, HttpCode, Post, Body, Param, Put, Delete, HttpException, NotFoundException, HttpStatus } from "@nestjs/common";
 import { UserService } from "../service/user.service";
 import { User } from "../entity/user.entity";
+import { GroupsService } from "src/groups/service/group.service";
 
 @Controller("users")
 export class UserController {
-    constructor(private readonly userService: UserService) { }
+    constructor(private readonly userService: UserService,) { }
 
     @Get()
     async getUsers(): Promise<User[]> {

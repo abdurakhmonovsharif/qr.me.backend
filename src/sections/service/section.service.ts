@@ -35,7 +35,7 @@ export class SectionService {
         for (const item of sections) {
             const savedSection = await this.sectionRepository.save({ ...item, page: { id: pageId } });
             createdSections.push(savedSection);
-            if (item.type === 'slider') {
+            if (item.type === 'sliders') {
                 await Promise.all(
                     item.sliders.map(async (slider) => {
                         await this.sliderService.create({ ...slider, section: savedSection });

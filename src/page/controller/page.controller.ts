@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Put } from "@nestjs/common";
 import { PageService } from "../service/page.service";
 import { Page } from "../entity/page.entity";
 import { CreatePageDto } from "../dto/page.dto";
@@ -12,7 +12,10 @@ export class PageController {
     async findAll(): Promise<Page[]> {
         return await this.pageService.findAll();
     }
-
+    @Get("/ws/:user_id")
+    async findByUserId(@Param("user_id") user_id: string) {
+        return this.pageService.findByIdUserId(user_id);
+    }
     @HttpCode(200)
     @Get(':id')
     async findOne(@Param('id') id: string): Promise<Page> {

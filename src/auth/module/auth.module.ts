@@ -8,11 +8,13 @@ import { RoleModule } from 'src/roles/module/role.module';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from '../strategy/local.strategy';
 import { JwtStrategy } from '../strategy/jwt.strategy';
+import { PlanModule } from 'src/plan/module/plan.module';
 
 @Module({
     imports: [UsersModule,
         RoleModule,
         PassportModule,
+        PlanModule,
         JwtModule.registerAsync({
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({

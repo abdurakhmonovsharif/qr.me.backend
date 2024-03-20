@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "../entity/user.entity";
+import * as argon2 from 'argon2';
 
 @Injectable()
 export class UserService {
@@ -11,7 +12,7 @@ export class UserService {
     ) { }
 
     async findAll(): Promise<User[]> {
-        let users = await this.userRepository.find();
+        let users = await this.userRepository.find({ relations: ['plan', 'page'] });
         const usersWithoutPassword = await Promise.all(users.map(async (user) => {
             const { password, ...userWithoutPassword } = user;
             return userWithoutPassword;
@@ -19,15 +20,19 @@ export class UserService {
         return usersWithoutPassword;
     }
     async findById(id: string) {
-        const user = await this.userRepository.findOne({ where: { id } });
-        delete user.password;
+        const user = await this.userRepository.findOne({ where: { id }, relations: ["plan"] });
+        return user;
+    }
+    async findByURL(url: string) {
+        const user = await this.userRepository.findOne({ where: { url }, relations: ['plan'] })
         return user;
     }
 
-
-    async findOneByEmail(email: string) {
-        return await this.userRepository.findOne({ where: { email: email.toLowerCase() } })
+    async getUsersByGroupId(groupId: string) {
+        const users = await this.userRepository.findBy({ group: { id: groupId } });
+        return users;
     }
+
 
     async create(userData: Partial<User>): Promise<User> {
         const newUser = this.userRepository.create({ ...userData, email: userData.email.toLowerCase() });

@@ -31,6 +31,10 @@ export class PageService {
     }
 
     async create(pageData: CreatePageDto): Promise<Page> {
+        const existsPage = await this.pageRepository.findOne({ where: { user: { id: pageData.userId } } });
+        if (existsPage) {
+            throw new HttpException('Page already exists', HttpStatus.FORBIDDEN);
+        }
         try {
             const contact = await this.contactService.create(pageData.contact);
             const user = await this.usersService.findById(pageData.userId);
@@ -39,13 +43,34 @@ export class PageService {
             const savedPage = await this.pageRepository.save(newPage);
             await this.sectionService.createSectionsByPageId(pageData.sections, savedPage.id);
             await this.linkService.createLinkByPageId(pageData.links, savedPage.id)
+            await this.usersService.update(user.id, { ...user, page: savedPage })
             return savedPage;
         } catch (error) {
             console.log(error);
             throw new HttpException('Failed to create page', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    async findByIdUserId(url: string) {
+        const user = await this.usersService.findByURL(url);
+        if (!user) {
+            throw new HttpException('Page not found', HttpStatus.NOT_FOUND);
+        }
+        const userWithOutPassword = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            url: user.url,
+            plan:user.plan.name
+        }
+        const page = await this.pageRepository.findOne({
+            where: { user: { id: user.id } },
+            relations: ['contact',  'theme', 'sections', 'sections.sliders', 'links']
+        });
+        if (!page) {
+            throw new HttpException('Page not found', HttpStatus.NOT_FOUND);
+        }
+        return { ...page, user: userWithOutPassword };
+    }
     async update(id: string, pageData: Partial<Page>): Promise<Page> {
         const page = await this.pageRepository.findOne({ where: { id } });
         if (!page) {

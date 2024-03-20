@@ -14,8 +14,10 @@ export class PlanService {
         return await this.planRepository.find();
     }
 
-    async findOne(id: string): Promise<Plan> {
-        return await this.planRepository.findOne({ where: { id } });
+    async findById(id: string): Promise<Plan> {
+        const plan = await this.planRepository.findOne({ where: { id } });
+        if (!plan) throw new Error('Plan not found');
+        return plan;
     }
 
     async create(planData: Partial<Plan>): Promise<Plan> {

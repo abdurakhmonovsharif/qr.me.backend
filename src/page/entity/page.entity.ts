@@ -1,6 +1,4 @@
-// page.entity.ts
-
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn, ManyToOne, Timestamp, ManyToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn, ManyToOne } from "typeorm";
 import { Theme } from 'src/themes/entity/theme.entity';
 import { Section } from 'src/sections/entity/section.entity';
 import { User } from "../../users/entity/user.entity";
@@ -13,18 +11,6 @@ export class Page {
     id: string;
 
     @Column()
-    site_link: string;
-
-    @Column({ nullable: true })
-    site_name: string;
-
-    @Column()
-    logo: string; // Assuming the logo is stored as a string representing the image URL
-
-    @Column()
-    description: string;
-
-    @Column()
     qr_code: string;
 
     @OneToMany(() => Section, section => section.page)
@@ -32,28 +18,50 @@ export class Page {
 
     @ManyToOne(() => Theme, theme => theme.pages)
     theme: Theme;
+
     @Column({ default: 0 })
     view_count: number;
 
-    @Column({ default: () => 'CURRENT_TIMESTAMP' }) // Default to current timestamp
+    @Column()
+    max_view_count: number;
+
+    @Column({ default: 0 })
+    edited_count: number;
+
+    @Column({ default: 0 })
+    max_edit_count: number;
+
+    @Column({ default: () => 'CURRENT_TIMESTAMP' })
     start_date: string;
 
-    @Column({ default: () => 'CURRENT_TIMESTAMP' }) // Default to current timestamp
+    @Column()
     end_date: string;
 
     @Column()
-    password: string;
+    password_edit: string;
 
     @Column()
-    type: string; // Assuming type can be 'site', 'cv', 'text', etc.
+    password_view: string;
 
-    @ManyToOne(() => User, user => user.pages)
+    @Column({ default: () => 'CURRENT_TIMESTAMP' })
+    updated_at: string;
+
+    @Column({ default: null })
+    last_view_date: string;
+
+    @Column({ default: "" })
+    comment: string;
+
+    @Column()
+    type: string; // Assuming type can be 'site', 'cv', 'text'
+
+    @OneToOne(() => User, user => user.page)
     user: User;
 
     @OneToOne(() => Contact, { cascade: true })
     @JoinColumn()
     contact: Contact;
-    
+
     @OneToMany(() => Link, link => link.page)
     links: Link[];
 }

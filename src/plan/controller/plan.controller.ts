@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common'
 import { PlanService } from '../service/plan.service';
 import { Plan } from '../enitity/plan.entity';
 
+
 @Controller('plan')
 export class PlanController {
     constructor(private readonly planService: PlanService) { }
@@ -13,9 +14,9 @@ export class PlanController {
 
     @Get(':id')
     async findOne(@Param('id') id: string): Promise<Plan> {
-        return this.planService.findOne(id);
+        return this.planService.findById(id);
     }
-
+   
     @Post()
     async create(@Body() planData: Partial<Plan>): Promise<Plan> {
         return this.planService.create(planData);

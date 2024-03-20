@@ -12,19 +12,19 @@ import { RolesGuard } from './auth/guards/roles.guard';
 import { PlanModule } from './plan/module/plan.module';
 import { SliderModule } from './sliders/module/slider.module';
 import { UploadModule } from './upload/module/upload.module';
-import { GitHubModule } from './github/module/github.module';
+import { GroupsModule } from './groups/module/group.module';
 @Module({
   imports: [
     RoleModule,
     PlanModule,
     AuthModule,
     UsersModule,
+    GroupsModule,
     ThemesModule,
     PageModule,
     SectionModule,
     SliderModule,
     UploadModule,
-    GitHubModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

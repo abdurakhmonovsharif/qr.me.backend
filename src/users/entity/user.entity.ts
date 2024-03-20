@@ -2,21 +2,37 @@
 import { Plan } from 'src/plan/enitity/plan.entity';
 import { Page } from 'src/page/entity/page.entity';
 import { Role } from 'src/roles/entity/role.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, ManyToMany, JoinTable, PrimaryColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Groups } from 'src/groups/entity/group.entity';
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn('varchar', { length: 255 })
     id: string;
 
     @Column()
     name: string;
 
-    @Column()
+    @Column({ unique: true })
     email: string;
 
     @Column()
     password?: string;
+
+    @Column({ default: () => 'CURRENT_TIMESTAMP' })
+    created_at: string
+
+    @Column({ unique: true })
+    url: string;
+
+    @Column({ default: false })
+    active: boolean;
+
+    @Column({ default: false })
+    block: boolean;
+
+    @Column({ nullable: false })
+    last_online: string;
 
     @ManyToOne(() => Role, role => role.users)
     role: Role;
@@ -24,7 +40,10 @@ export class User {
     @ManyToOne(() => Plan, plan => plan.users)
     plan: Plan;
 
-    @OneToMany(() => Page, page => page.user)
-    pages: Page[];
+    @OneToOne(() => Page, page => page.user)
+    @JoinColumn()
+    page: Page;
 
+    @ManyToOne(() => Groups, (groups) => groups.users)
+    group: Groups;
 }

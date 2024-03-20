@@ -12,36 +12,36 @@ export class UploadController {
     async uploadFile(@UploadedFile() file: Express.Multer.File) {
         const storage = this.firebaseService.getStorage();
         const bucket = storage.bucket();
-        
+
         // Generate new filename with timestamp and file's MIME type
         const timestamp = Date.now();
         const fileExtension = path.extname(file.originalname); // Get the file extension
         const sanitizedFilename = `${timestamp}${fileExtension}`;
-        
+
         const fileUpload = bucket.file(sanitizedFilename);
         const stream = fileUpload.createWriteStream({
             metadata: {
                 contentType: file.mimetype,
             },
         });
-    
+
         stream.on('error', (error) => {
             console.error(error);
         });
-    
+
         stream.on('finish', () => {
             console.log(`File ${sanitizedFilename} uploaded successfully.`);
         });
-    
+
         stream.end(file.buffer);
-        
+
         let fileURL: string;
         if (file.mimetype === 'text/html') {
             fileURL = this.configService.get('BASE_URL') + 'upload/html/' + sanitizedFilename;
         } else {
             fileURL = this.configService.get('BASE_URL') + 'upload/' + sanitizedFilename;
         }
-        
+
         return { fileURL };
     }
     @Get(':fileName')

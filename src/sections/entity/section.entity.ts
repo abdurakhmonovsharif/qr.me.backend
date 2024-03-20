@@ -2,7 +2,7 @@
 import { Contact } from 'src/contact/entity/contact.entity';
 import { Page } from 'src/page/entity/page.entity';
 import { Slider } from 'src/sliders/entity/slider.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column,  ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class Section {
@@ -26,5 +26,8 @@ export class Section {
     
     @ManyToOne(() => Page, page => page.sections)
     page: Page;
+
+    @Column({default:()=>"CURRENT_TIMESTAMP"})
+    created_at:string;
 
 }

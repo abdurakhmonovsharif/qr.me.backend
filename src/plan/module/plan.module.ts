@@ -8,5 +8,6 @@ import { PlanService } from '../service/plan.service';
     imports: [TypeOrmModule.forFeature([Plan])],
     controllers: [PlanController],
     providers: [PlanService],
+    exports:[PlanService]
 })
 export class PlanModule { }

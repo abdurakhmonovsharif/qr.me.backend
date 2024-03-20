@@ -10,20 +10,6 @@ export class Plan {
 
     @Column()
     name: string;
-    @Column()
-    price: string;
-
-    @Column()
-    description: string;
-
-    @Column()
-    textEnabled: boolean;
-
-    @Column()
-    cvEnabled: boolean;
-
-    @Column()
-    siteEnabled: boolean;
 
     @OneToMany(() => User, user => user.plan)
     users: User[];
