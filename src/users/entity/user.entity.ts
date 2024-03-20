@@ -22,7 +22,7 @@ export class User {
     @Column({ default: () => 'CURRENT_TIMESTAMP' })
     created_at: string
 
-    @Column({ unique: true })
+    @Column({ unique: true, nullable: true })
     url: string;
 
     @Column({ default: false })
@@ -31,7 +31,7 @@ export class User {
     @Column({ default: false })
     block: boolean;
 
-    @Column({ nullable: false })
+    @Column({ nullable: true })
     last_online: string;
 
     @ManyToOne(() => Role, role => role.users)

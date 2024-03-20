@@ -22,7 +22,7 @@ export class Page {
     @Column({ default: 0 })
     view_count: number;
 
-    @Column()
+    @Column({ default: 0 })
     max_view_count: number;
 
     @Column({ default: 0 })
@@ -37,10 +37,10 @@ export class Page {
     @Column()
     end_date: string;
 
-    @Column()
+    @Column({ nullable: true })
     password_edit: string;
 
-    @Column()
+    @Column({ nullable: true })
     password_view: string;
 
     @Column({ default: () => 'CURRENT_TIMESTAMP' })
@@ -49,11 +49,11 @@ export class Page {
     @Column({ default: null })
     last_view_date: string;
 
-    @Column({ default: "" })
+    @Column({ nullable: true })
     comment: string;
 
     @Column()
-    type: string; // Assuming type can be 'site', 'cv', 'text'
+    type: string;
 
     @OneToOne(() => User, user => user.page)
     user: User;

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "../entity/user.entity";
@@ -13,6 +13,7 @@ export class UserService {
 
     async findAll(): Promise<User[]> {
         let users = await this.userRepository.find({ relations: ['plan', 'page'] });
+        if (!users) return [];
         const usersWithoutPassword = await Promise.all(users.map(async (user) => {
             const { password, ...userWithoutPassword } = user;
             return userWithoutPassword;
