@@ -32,4 +32,8 @@ export class SliderService {
     async remove(id: string): Promise<void> {
         await this.sliderRepository.delete(id);
     }
+    async deleteBySectionId(sectionId: string): Promise<void> {
+        const sliders = await this.sliderRepository.find({ where: { section: { id: sectionId } } })
+        await this.sliderRepository.remove(sliders)
+    }
 }

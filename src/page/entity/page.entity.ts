@@ -13,12 +13,6 @@ export class Page {
     @Column()
     qr_code: string;
 
-    @OneToMany(() => Section, section => section.page)
-    sections: Section[];
-
-    @ManyToOne(() => Theme, theme => theme.pages)
-    theme: Theme;
-
     @Column({ default: 0 })
     view_count: number;
 
@@ -55,13 +49,19 @@ export class Page {
     @Column()
     type: string;
 
-    @OneToOne(() => User, user => user.page)
+    @OneToMany(() => Section, section => section.page)
+    sections: Section[];
+
+    @ManyToOne(() => Theme, theme => theme.pages, { onDelete: 'CASCADE' })
+    theme: Theme;
+
+    @OneToOne(() => User, user => user.page, { onDelete: 'CASCADE' })
     user: User;
 
-    @OneToOne(() => Contact, { cascade: true })
+    @OneToOne(() => Contact, { cascade: true, onDelete: 'CASCADE' })
     @JoinColumn()
     contact: Contact;
 
-    @OneToMany(() => Link, link => link.page)
+    @OneToMany(() => Link, link => link.page, { cascade: true })
     links: Link[];
 }

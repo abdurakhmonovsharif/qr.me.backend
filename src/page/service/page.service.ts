@@ -19,7 +19,6 @@ export class PageService {
         private readonly themeService: ThemeService,
         private readonly usersService: UserService,
         private readonly linkService: LinkService,
-
     ) { }
 
     async findAll(): Promise<Page[]> {
@@ -29,7 +28,12 @@ export class PageService {
     async findOne(id: string): Promise<Page> {
         return this.pageRepository.findOne({ where: { id } });
     }
-
+    async checkPassword(id: string, password: string): Promise<boolean> {
+        console.log(password);
+        
+        const page = await this.pageRepository.findOne({ where: { id } })
+        return page.password_edit === password;
+    }
     async create(pageData: CreatePageDto): Promise<Page> {
         const existsPage = await this.pageRepository.findOne({ where: { user: { id: pageData.userId } } });
         if (existsPage) {
@@ -55,20 +59,35 @@ export class PageService {
         if (!user) {
             throw new HttpException('Page not found', HttpStatus.NOT_FOUND);
         }
+        if (!user.active || user.block) {
+            throw new HttpException('Page not found', HttpStatus.FORBIDDEN);
+        }
         const userWithOutPassword = {
             id: user.id,
             name: user.name,
             email: user.email,
             url: user.url,
-            plan:user.plan.name
+            plan: user.plan.name
         }
         const page = await this.pageRepository.findOne({
             where: { user: { id: user.id } },
-            relations: ['contact',  'theme', 'sections', 'sections.sliders', 'links']
+            relations: ['contact', 'theme', 'sections', 'sections.sliders', 'links']
         });
         if (!page) {
             throw new HttpException('Page not found', HttpStatus.NOT_FOUND);
         }
+        if (page.view_count !== page.max_view_count) {
+            page.view_count++
+        } else {
+            user.active = false;
+            await this.usersService.update(user.id, user)
+        }
+
+        if (page.start_date > page.end_date) {
+            user.active = false;
+            await this.usersService.update(user.id, user)
+        }
+        await this.pageRepository.save(page);
         return { ...page, user: userWithOutPassword };
     }
     async update(id: string, pageData: Partial<Page>): Promise<Page> {
@@ -76,15 +95,27 @@ export class PageService {
         if (!page) {
             throw new Error('Page not found');
         }
+
         Object.assign(page, pageData);
+
+        page.updated_at = new Date().toISOString();
+
         return this.pageRepository.save(page);
     }
 
     async delete(id: string): Promise<void> {
-        const page = await this.pageRepository.findOne({ where: { id } });
+        const page = await this.pageRepository.findOne({
+            where: { id },
+            relations: ['contact', 'sections', 'sections.sliders', 'links', "user"]
+        });
         if (!page) {
-            throw new Error('Page not found');
+            throw new HttpException('Page not found', HttpStatus.NOT_FOUND);
         }
+        page.user.page = null;
+        await this.usersService.update(page.user.id, page.user);
+        await this.sectionService.deleteByPageId(page.id);
         await this.pageRepository.remove(page);
+        await this.contactService.delete(page.contact.id);
+        await this.linkService.deleteByPageId(page.id);
     }
 }

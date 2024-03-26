@@ -16,7 +16,7 @@ export class User {
     @Column({ unique: true })
     email: string;
 
-    @Column()
+    @Column({ nullable: true, default: null })
     password?: string;
 
     @Column({ default: () => 'CURRENT_TIMESTAMP' })
@@ -25,7 +25,7 @@ export class User {
     @Column({ unique: true, nullable: true })
     url: string;
 
-    @Column({ default: false })
+    @Column({ default: true })
     active: boolean;
 
     @Column({ default: false })

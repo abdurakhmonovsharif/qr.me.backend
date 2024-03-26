@@ -27,7 +27,11 @@ export class PageController {
     async create(@Body() pageData: CreatePageDto): Promise<Page> {
         return await this.pageService.create(pageData);
     }
-
+    @HttpCode(201)
+    @Post("check_edit_password/:id")
+    async checkPassword(@Param("id") id: string, @Body() data: { password: string }): Promise<boolean> {
+        return await this.pageService.checkPassword(id, data.password);
+    }
     @HttpCode(200)
     @Put(':id')
     async update(@Param('id') id: string, @Body() pageData: Partial<Page>): Promise<Page> {
@@ -39,4 +43,5 @@ export class PageController {
     async delete(@Param('id') id: string): Promise<void> {
         return await this.pageService.delete(id);
     }
+
 }

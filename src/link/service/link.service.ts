@@ -38,4 +38,8 @@ export class LinkService {
     async deleteLink(linkId: string): Promise<void> {
         await this.linkRepository.delete(linkId);
     }
+    async deleteByPageId(pageId: string): Promise<void> {
+        const links = await this.linkRepository.find({ where: { page: { id: pageId } } })
+        await this.linkRepository.remove(links)
+    }
 }

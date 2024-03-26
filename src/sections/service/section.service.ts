@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Section } from '../entity/section.entity';
@@ -58,8 +58,25 @@ export class SectionService {
     async delete(id: string): Promise<void> {
         const section = await this.sectionRepository.findOne({ where: { id } });
         if (!section) {
-            throw new Error('Section not found');
+            throw new HttpException('Section not found',HttpStatus.NOT_FOUND);
         }
         await this.sectionRepository.remove(section);
     }
+    async deleteByPageId(pageId: string): Promise<void> {
+        const sections = await this.sectionRepository.find({ where: { page: { id: pageId } }, relations: ["sliders"] });
+
+        if (!sections || sections.length === 0) {
+            throw new Error('Sections not found for the given pageId');
+        }
+
+        for (const section of sections) {
+            // Delete associated sliders
+            if (section.sliders && section.sliders.length > 0) {
+                await this.sliderService.deleteBySectionId(section.id);
+            }
+        }
+
+        await this.sectionRepository.remove(sections);
+    }
+
 }
